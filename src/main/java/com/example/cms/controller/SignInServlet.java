@@ -14,8 +14,6 @@ import java.io.IOException;
 public class SignInServlet extends HttpServlet {
 
     @Override
-
-
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
@@ -24,15 +22,21 @@ public class SignInServlet extends HttpServlet {
 
         if (user != null) {
             HttpSession session = req.getSession();
-            session.setAttribute("username",user.getUsername());
+            session.setAttribute("username", user.getUsername());
             session.setAttribute("id", user.getId());
             session.setAttribute("role", user.getRole());
-            // Remove this line
-            // resp.sendRedirect("/jsp/AdminDashboard.jsp");
-            // Keep this line
-            resp.sendRedirect(req.getContextPath() + "/jsp/AdminDashboard.jsp");
+
+            // Redirect based on user role
+            if ("admin".equalsIgnoreCase(user.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/jsp/AdminDashboard.jsp");
+            } else if ("employee".equalsIgnoreCase(user.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/jsp/EmployeeDashboard.jsp");
+            } else {
+                // Handle unexpected roles
+                resp.sendRedirect(req.getContextPath() + "/jsp/signin.jsp?error=Invalid+role");
+            }
         } else {
-            // Fix this to properly redirect with an error message
+            // Redirect back to signin page when login fails (not index.jsp)
             resp.sendRedirect(req.getContextPath() + "/jsp/signin.jsp?error=Invalid+username+or+password");
         }
     }

@@ -13,7 +13,7 @@ body {
     align-items: center;
 }
 
-.login-container {
+.signup-container {
     background: white;
     padding: 40px;
     border-radius: 16px;
@@ -23,7 +23,7 @@ body {
     transition: transform 0.3s ease;
 }
 
-.login-container:hover {
+.signup-container:hover {
     transform: translateY(-5px);
 }
 
@@ -59,7 +59,7 @@ label {
     font-size: 14px;
 }
 
-input {
+input, select {
     width: 100%;
     padding: 12px 15px;
     border: 1px solid #e2e8f0;
@@ -68,7 +68,7 @@ input {
     transition: all 0.3s;
 }
 
-input:focus {
+input:focus, select:focus {
     border-color: #667eea;
     outline: none;
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
@@ -77,15 +77,9 @@ input:focus {
 .eye-icon {
     position: absolute;
     right: 15px;
-    top: 70%; /* Center vertically relative to input field */
-    transform: translateY(-50%);
+    top: 45px;
     cursor: pointer;
     color: #718096;
-    z-index: 2;
-}
-
-input[type="password"] {
-    padding-right: 40px; /* Add space for the eye icon */
 }
 
 .btn {
@@ -127,7 +121,7 @@ input[type="password"] {
 }
 
 @media (max-width: 500px) {
-    .login-container {
+    .signup-container {
         padding: 30px 20px;
     }
 }

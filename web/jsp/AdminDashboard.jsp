@@ -8,7 +8,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>DashBoard</title>
+    <title>Admin DashBoard</title>
 </head>
 <body>
 
