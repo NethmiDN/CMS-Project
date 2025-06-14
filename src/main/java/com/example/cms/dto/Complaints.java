@@ -66,22 +66,25 @@ public class Complaints {
     }
 
     public String toJson() {
-        return "{" +
-                "\"id\":" + id + "," +
-                "\"userId\":" + userId + "," +
-                "\"subject\":\"" + escapeJson(subject) + "\"," +
-                "\"description\":\"" + escapeJson(description) + "\"," +
-                "\"status\":\"" + status + "\"," +
-                "\"dateSubmitted\":\"" + (date_submitted != null ? date_submitted.toString() : "") + "\"" +
-                "}";
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("\"id\":").append(id).append(",");
+        sb.append("\"subject\":\"").append(escapeJsonString(subject)).append("\",");
+        sb.append("\"description\":\"").append(escapeJsonString(description)).append("\",");
+        sb.append("\"userId\":").append(userId).append(",");
+        sb.append("\"date_submitted\":\"").append(date_submitted).append("\",");
+        sb.append("\"status\":\"").append(status).append("\"");
+        sb.append("}");
+        return sb.toString();
     }
 
-    private String escapeJson(String text) {
-        if (text == null) return "";
-        return text.replace("\\", "\\\\")
+    private String escapeJsonString(String input) {
+        if (input == null) return "";
+        return input.replace("\\", "\\\\")
                 .replace("\"", "\\\"")
                 .replace("\n", "\\n")
-                .replace("\r", "\\r");
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.cms.model;
 
 import com.example.cms.dto.Complaints;
+import com.example.cms.util.DataSource;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -81,18 +82,41 @@ public class ComplaintsModel {
 
     // Get a complaint by ID
     public Complaints getComplaintById(int id) {
-        String sql = "SELECT * FROM complaints WHERE id=?";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                return mapComplaintFromResultSet(rs);
+        Complaints complaint = null;
+        Connection connection = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+
+        try {
+            connection = DataSource.getConnection();
+            String sql = "SELECT * FROM complaints WHERE id = ?";
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, id);
+            resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                complaint = new Complaints();
+                complaint.setId(resultSet.getInt("id"));
+                complaint.setSubject(resultSet.getString("subject"));
+                complaint.setDescription(resultSet.getString("description"));
+                complaint.setUserId(resultSet.getInt("user_id"));
+                complaint.setDate_submitted(resultSet.getDate("date_submitted"));
+                complaint.setStatus(resultSet.getString("status"));
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // Close resources
+            try {
+                if (resultSet != null) resultSet.close();
+                if (statement != null) statement.close();
+                if (connection != null) connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+
+        return complaint;
     }
 
     public List<Complaints> getComplaintsByUserId(int userId) {

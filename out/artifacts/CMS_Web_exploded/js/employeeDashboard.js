@@ -1,3 +1,5 @@
+const contextPath = document.querySelector('meta[name="contextPath"]').getAttribute('content');
+
 document.addEventListener('DOMContentLoaded', function() {
     // View complaint details
     document.querySelectorAll('.view-btn').forEach(button => {

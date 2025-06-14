@@ -80,9 +80,11 @@ public class AdminServlet extends HttpServlet {
             // Handle complaint status update
             int complaintId = Integer.parseInt(req.getParameter("complaintId"));
             String status = req.getParameter("status");
-            String remarks = req.getParameter("remarks");
 
-            boolean success = complaintsModel.updateComplaintStatus(complaintId, status, remarks);
+            // Debug the parameters
+            System.out.println("Updating complaint: ID=" + complaintId + ", Status=" + status);
+
+            boolean success = complaintsModel.updateComplaintStatus(complaintId, status, "");
 
             if (success) {
                 resp.sendRedirect(req.getContextPath() + "/admin");
@@ -91,7 +93,7 @@ public class AdminServlet extends HttpServlet {
             }
         } else if ("/deleteComplaint".equals(path)) {
             // Handle complaint deletion
-            int complaintId = Integer.parseInt(req.getParameter("deleteComplaintId"));
+            int complaintId = Integer.parseInt(req.getParameter("complaintId"));  // Changed from deleteComplaintId
 
             boolean success = complaintsModel.deleteComplaint(complaintId);
 
@@ -100,9 +102,6 @@ public class AdminServlet extends HttpServlet {
             } else {
                 resp.sendRedirect(req.getContextPath() + "/admin?error=deleteFailed");
             }
-        } else {
-            // Unknown action
-            resp.sendRedirect(req.getContextPath() + "/admin");
         }
     }
 }
