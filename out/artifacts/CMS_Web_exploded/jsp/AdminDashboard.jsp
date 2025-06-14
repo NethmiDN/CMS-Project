@@ -153,14 +153,9 @@
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Resolved">Resolved</option>
-                            <option value="Rejected">Rejected</option>
                         </select>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="remarks" class="form-label">Admin Remarks</label>
-                        <textarea class="form-control" id="remarks" name="remarks" rows="4"></textarea>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

@@ -27,21 +27,37 @@ public class AdminServlet extends HttpServlet {
             return;
         }
 
-        // Debug output
-        System.out.println("AdminServlet: Processing GET request");
+        String pathInfo = req.getPathInfo();
+        String path = pathInfo == null ? "" : pathInfo;
 
-        // Get all complaints
-        ComplaintsModel complaintsModel = new ComplaintsModel();
-        List<Complaints> complaints = complaintsModel.getAllComplaints();
+        // Handle get complaint details for modals
+        if ("/getComplaint".equals(path)) {
+            int id = Integer.parseInt(req.getParameter("id"));
+            ComplaintsModel complaintsModel = new ComplaintsModel();
+            Complaints complaint = complaintsModel.getComplaintById(id);
 
-        // Debug output
-        System.out.println("AdminServlet: Retrieved " + complaints.size() + " complaints");
+            if (complaint != null) {
+                resp.setContentType("application/json");
+                resp.getWriter().write(complaint.toJson());
+                return;
+            }
+        } else {
+            // Debug output
+            System.out.println("AdminServlet: Processing GET request");
 
-        // Set the complaints as request attribute
-        req.setAttribute("complaints", complaints);
+            // Get all complaints
+            ComplaintsModel complaintsModel = new ComplaintsModel();
+            List<Complaints> complaints = complaintsModel.getAllComplaints();
 
-        // Forward to the dashboard JSP
-        req.getRequestDispatcher("/jsp/AdminDashboard.jsp").forward(req, resp);
+            // Debug output
+            System.out.println("AdminServlet: Retrieved " + complaints.size() + " complaints");
+
+            // Set the complaints as request attribute
+            req.setAttribute("complaints", complaints);
+
+            // Forward to the dashboard JSP
+            req.getRequestDispatcher("/jsp/AdminDashboard.jsp").forward(req, resp);
+        }
     }
 
     @Override

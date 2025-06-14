@@ -1,43 +1,39 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Edit button click handlers
+    // View complaint details
+    document.querySelectorAll('.view-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const complaintId = this.getAttribute('data-id');
+            fetch(`${contextPath}/employee/getComplaint?id=${complaintId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('viewId').textContent = data.id;
+                    document.getElementById('viewSubject').textContent = data.subject;
+                    document.getElementById('viewDescription').textContent = data.description;
+                    document.getElementById('viewDate').textContent = data.date_submitted;
+                    document.getElementById('viewStatus').textContent = data.status;
+                })
+                .catch(error => console.error('Error fetching complaint details:', error));
+        });
+    });
+
+    // Edit complaint
     document.querySelectorAll('.edit-btn').forEach(button => {
         button.addEventListener('click', function() {
             const complaintId = this.getAttribute('data-id');
             document.getElementById('editComplaintId').value = complaintId;
 
-            // Fetch complaint data via AJAX and populate the form
-            fetch('${pageContext.request.contextPath}/employee/getComplaint?id=' + complaintId)
+            // Fetch current data to fill the form
+            fetch(`${contextPath}/employee/getComplaint?id=${complaintId}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('editSubject').value = data.subject;
                     document.getElementById('editDescription').value = data.description;
-                    document.getElementById('editStatus').value = data.status;
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => console.error('Error fetching complaint details:', error));
         });
     });
 
-    // View button click handlers
-    document.querySelectorAll('.view-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            const complaintId = this.getAttribute('data-id');
-
-            // Fetch and display complaint details
-            fetch('${pageContext.request.contextPath}/employee/getComplaint?id=' + complaintId)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('viewId').textContent = data.id;
-                    document.getElementById('viewSubject').textContent = data.subject;
-                    document.getElementById('viewDate').textContent = data.dateSubmitted;
-                    document.getElementById('viewStatus').textContent = data.status;
-                    document.getElementById('viewDescription').textContent = data.description;
-                    document.getElementById('viewRemarks').textContent = data.remarks || 'No remarks yet';
-                })
-                .catch(error => console.error('Error:', error));
-        });
-    });
-
-    // Delete button click handlers
+    // Delete complaint
     document.querySelectorAll('.delete-btn').forEach(button => {
         button.addEventListener('click', function() {
             const complaintId = this.getAttribute('data-id');
