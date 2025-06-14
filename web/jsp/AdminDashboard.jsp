@@ -56,36 +56,46 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${complaints}" var="complaint">
-                    <tr>
-                        <td>${complaint.id}</td>
-                        <td>${complaint.subject}</td>
-                        <td>${complaint.description}</td>
-                        <td>${complaint.user_id}</td>
-                        <td>${complaint.dateSubmitted}</td>
-                        <td>
-                                    <span class="badge ${complaint.status == 'Pending' ? 'bg-warning' :
-                                        complaint.status == 'In Progress' ? 'bg-info' :
-                                        complaint.status == 'Resolved' ? 'bg-success' : 'bg-danger'}">
-                                            ${complaint.status}
-                                    </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-primary view-btn" data-id="${complaint.id}"
-                                    data-bs-toggle="modal" data-bs-target="#viewComplaintModal">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn btn-sm btn-warning update-btn" data-id="${complaint.id}"
-                                    data-bs-toggle="modal" data-bs-target="#updateStatusModal">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger delete-btn" data-id="${complaint.id}"
-                                    data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    </tr>
-                </c:forEach>
+                <%
+                    java.util.List<com.example.cms.dto.Complaints> complaintsList =
+                            (java.util.List<com.example.cms.dto.Complaints>) request.getAttribute("complaints");
+                    if (complaintsList != null && !complaintsList.isEmpty()) {
+                        for (com.example.cms.dto.Complaints complaint : complaintsList) {
+                %>
+                <tr>
+                    <td><%= complaint.getId() %></td>
+                    <td><%= complaint.getSubject() %></td>
+                    <td><%= complaint.getDescription() %></td>
+                    <td><%= complaint.getUserId() %></td>
+                    <td><%= complaint.getDate_submitted() %></td>
+                    <td>
+            <span class="badge <%= complaint.getStatus().equals("Pending") ? "bg-warning" :
+                complaint.getStatus().equals("In Progress") ? "bg-info" :
+                complaint.getStatus().equals("Resolved") ? "bg-success" : "bg-danger" %>">
+                <%= complaint.getStatus() %>
+            </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary view-btn" data-id="<%= complaint.getId() %>"
+                                data-bs-toggle="modal" data-bs-target="#viewComplaintModal">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-warning update-btn" data-id="<%= complaint.getId() %>"
+                                data-bs-toggle="modal" data-bs-target="#updateStatusModal">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="<%= complaint.getId() %>"
+                                data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+                <%
+                    }
+                } else {
+                %>
+                <tr><td colspan="7" class="text-center">No complaints found</td></tr>
+                <% } %>
                 </tbody>
             </table>
         </div>

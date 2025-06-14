@@ -1,7 +1,6 @@
 package com.example.cms.model;
 
 import com.example.cms.dto.Complaints;
-import com.example.cms.util.DataSource;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -46,15 +45,37 @@ public class ComplaintsModel {
         }
     }
 
-    // Delete a complaint
-    public void deleteComplaint(int id) {
-        String sql = "DELETE FROM complaints WHERE id=?";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
+    public boolean updateComplaintStatus(int complaintId, String status, String remarks) {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "UPDATE complaints SET status = ?, remarks = ? WHERE id = ?")) {
+
+            statement.setString(1, status);
+            statement.setString(2, remarks);
+            statement.setInt(3, complaintId);
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            System.err.println("Error updating complaint status: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean deleteComplaint(int complaintId) {
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "DELETE FROM complaints WHERE id = ?")) {
+
+            statement.setInt(1, complaintId);
+
+            int rowsAffected = statement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error deleting complaint: " + e.getMessage());
+            return false;
         }
     }
 
@@ -104,5 +125,32 @@ public class ComplaintsModel {
         complaint.setDate_submitted(resultSet.getTimestamp("date_submitted"));
         complaint.setStatus(resultSet.getString("status"));
         return complaint;
+    }
+
+    public List<Complaints> getAllComplaints() {
+        List<Complaints> complaints = new ArrayList<>();
+
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(
+                     "SELECT * FROM complaints ORDER BY date_submitted DESC")) {
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    Complaints complaint = new Complaints();
+                    complaint.setId(resultSet.getInt("id"));
+                    complaint.setSubject(resultSet.getString("subject"));
+                    complaint.setDescription(resultSet.getString("description"));
+                    complaint.setUserId(resultSet.getInt("user_id"));
+                    complaint.setDate_submitted(resultSet.getTimestamp("date_submitted"));
+                    complaint.setStatus(resultSet.getString("status"));
+                    complaints.add(complaint);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error retrieving all complaints: " + e.getMessage());
+        }
+
+        return complaints;
     }
 }

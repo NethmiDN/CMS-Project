@@ -60,39 +60,47 @@
                 </tr>
                 </thead>
                 <tbody>
-                <c:forEach items="${userComplaints}" var="complaint">
-                    <tr>
-                        <td>${complaint.id}</td>
-                        <td>${complaint.subject}</td>
-                        <td>${complaint.description}</td>
-                        <td>${complaint.date_submitted}</td>
-                        <td>${complaint.status}</td>
-                        <td>
-                            <span class="badge ${complaint.status == 'Pending' ? 'bg-warning' :
-                                complaint.status == 'In Progress' ? 'bg-info' :
-                                complaint.status == 'Resolved' ? 'bg-success' : 'bg-danger'}">
-                                    ${complaint.status}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="btn btn-sm btn-primary view-btn" data-id="${complaint.id}"
-                                    data-bs-toggle="modal" data-bs-target="#viewComplaintModal">
-                                <i class="bi bi-eye"></i>
-                            </button>
-
-                            <c:if test="${complaint.status != 'Resolved' && complaint.status != 'Rejected'}">
-                                <button class="btn btn-sm btn-warning edit-btn" data-id="${complaint.id}"
-                                        data-bs-toggle="modal" data-bs-target="#editComplaintModal">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="${complaint.id}"
-                                        data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </c:if>
-                        </td>
-                    </tr>
-                </c:forEach>
+                <%
+                    java.util.List<com.example.cms.dto.Complaints> userComplaints =
+                            (java.util.List<com.example.cms.dto.Complaints>) request.getAttribute("userComplaints");
+                    if (userComplaints != null && !userComplaints.isEmpty()) {
+                        for (com.example.cms.dto.Complaints complaint : userComplaints) {
+                %>
+                <tr>
+                    <td><%= complaint.getId() %></td>
+                    <td><%= complaint.getSubject() %></td>
+                    <td><%= complaint.getDescription() %></td>
+                    <td><%= complaint.getDate_submitted() %></td>
+                    <td>
+            <span class="badge <%= complaint.getStatus().equals("Pending") ? "bg-warning" :
+                complaint.getStatus().equals("In Progress") ? "bg-info" :
+                complaint.getStatus().equals("Resolved") ? "bg-success" : "bg-danger" %>">
+                <%= complaint.getStatus() %>
+            </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary view-btn" data-id="<%= complaint.getId() %>"
+                                data-bs-toggle="modal" data-bs-target="#viewComplaintModal">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <% if (!complaint.getStatus().equals("Resolved") && !complaint.getStatus().equals("Rejected")) { %>
+                        <button class="btn btn-sm btn-warning edit-btn" data-id="<%= complaint.getId() %>"
+                                data-bs-toggle="modal" data-bs-target="#editComplaintModal">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="<%= complaint.getId() %>"
+                                data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                        <% } %>
+                    </td>
+                </tr>
+                <%
+                    }
+                } else {
+                %>
+                <tr><td colspan="6" class="text-center">No complaints found</td></tr>
+                <% } %>
                 </tbody>
             </table>
         </div>
