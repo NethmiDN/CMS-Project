@@ -24,23 +24,9 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Users</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Reports</a>
-                </li>
-            </ul>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <div class="d-flex">
-                    <span class="navbar-text me-3">
-                        Welcome, ${sessionScope.username}
-                    </span>
-                <a href="${pageContext.request.contextPath}/Logout" class="btn btn-light btn-sm">Logout</a>
+                <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-light btn-sm">Logout</a>
             </div>
         </div>
     </div>
@@ -54,27 +40,6 @@
         </div>
     </div>
 
-    <!-- Filters and Search -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary active">All</button>
-                <button type="button" class="btn btn-outline-warning">Pending</button>
-                <button type="button" class="btn btn-outline-info">In Progress</button>
-                <button type="button" class="btn btn-outline-success">Resolved</button>
-                <button type="button" class="btn btn-outline-danger">Rejected</button>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search complaints..." id="searchInput">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Complaints Table -->
     <div class="card">
         <div class="card-body">
@@ -83,7 +48,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Subject</th>
-                    <th>Department</th>
+                    <th>Description</th>
                     <th>Submitted By</th>
                     <th>Date</th>
                     <th>Status</th>
@@ -95,8 +60,8 @@
                     <tr>
                         <td>${complaint.id}</td>
                         <td>${complaint.subject}</td>
-                        <td>${complaint.department}</td>
-                        <td>${complaint.userName}</td>
+                        <td>${complaint.description}</td>
+                        <td>${complaint.user_id}</td>
                         <td>${complaint.dateSubmitted}</td>
                         <td>
                                     <span class="badge ${complaint.status == 'Pending' ? 'bg-warning' :
@@ -142,7 +107,7 @@
                         <div class="col-md-6">
                             <p><strong>ID:</strong> <span id="viewId"></span></p>
                             <p><strong>Subject:</strong> <span id="viewSubject"></span></p>
-                            <p><strong>Department:</strong> <span id="viewDepartment"></span></p>
+                            <p><strong>Description:</strong> <span id="viewDescription"></span></p>
                         </div>
                         <div class="col-md-6">
                             <p><strong>Submitted By:</strong> <span id="viewUser"></span></p>
@@ -150,14 +115,7 @@
                             <p><strong>Status:</strong> <span id="viewStatus"></span></p>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <strong>Description:</strong>
-                        <p id="viewDescription" class="p-2 border rounded"></p>
-                    </div>
-                    <div class="mb-3">
-                        <strong>Admin Remarks:</strong>
-                        <p id="viewRemarks" class="p-2 border rounded"></p>
-                    </div>
+
                 </div>
             </div>
             <div class="modal-footer">

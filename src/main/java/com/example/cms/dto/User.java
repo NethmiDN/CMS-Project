@@ -55,7 +55,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "UserDTO{" +
+        return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +

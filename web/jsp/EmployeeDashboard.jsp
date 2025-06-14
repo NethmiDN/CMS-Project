@@ -23,29 +23,15 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#newComplaintModal">
-                        New Complaint
-                    </a>
-                </li>
-            </ul>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <div class="d-flex">
-                <span class="navbar-text me-3">
-                    Welcome, ${sessionScope.username}
-                </span>
-                <a href="${pageContext.request.contextPath}/Logout" class="btn btn-light btn-sm">Logout</a>
+                <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-light btn-sm" id="logout_btn">Logout</a>
             </div>
         </div>
     </div>
 </nav>
 
 <div class="container">
-    <!-- Rest of your code remains the same -->
     <!-- Dashboard Header -->
     <div class="row mb-4">
         <div class="col-md-8">
@@ -59,63 +45,6 @@
         </div>
     </div>
 
-    <!-- Status Summary Cards -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card text-center bg-light">
-                <div class="card-body">
-                    <h5 class="card-title">Total Complaints</h5>
-                    <h2 class="card-text">${totalComplaints}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-center status-pending">
-                <div class="card-body">
-                    <h5 class="card-title">Pending</h5>
-                    <h2 class="card-text">${pendingComplaints}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-center status-in-progress">
-                <div class="card-body">
-                    <h5 class="card-title">In Progress</h5>
-                    <h2 class="card-text">${inProgressComplaints}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card text-center status-resolved">
-                <div class="card-body">
-                    <h5 class="card-title">Resolved</h5>
-                    <h2 class="card-text">${resolvedComplaints}</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Filters and Search -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-primary active">All</button>
-                <button type="button" class="btn btn-outline-warning">Pending</button>
-                <button type="button" class="btn btn-outline-info">In Progress</button>
-                <button type="button" class="btn btn-outline-success">Resolved</button>
-                <button type="button" class="btn btn-outline-danger">Rejected</button>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="input-group">
-                <input type="text" class="form-control" placeholder="Search complaints..." id="searchInput">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <!-- Complaints Table -->
     <div class="card">
         <div class="card-body">
@@ -124,7 +53,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Subject</th>
-                    <th>Department</th>
+                    <th>Description</th>
                     <th>Date</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -135,8 +64,9 @@
                     <tr>
                         <td>${complaint.id}</td>
                         <td>${complaint.subject}</td>
-                        <td>${complaint.department}</td>
-                        <td>${complaint.dateSubmitted}</td>
+                        <td>${complaint.description}</td>
+                        <td>${complaint.date_submitted}</td>
+                        <td>${complaint.status}</td>
                         <td>
                             <span class="badge ${complaint.status == 'Pending' ? 'bg-warning' :
                                 complaint.status == 'In Progress' ? 'bg-info' :
@@ -185,18 +115,6 @@
                         <input type="text" class="form-control" id="subject" name="subject" required>
                     </div>
                     <div class="mb-3">
-                        <label for="department" class="form-label">Department</label>
-                        <select class="form-select" id="department" name="department" required>
-                            <option value="">Select Department</option>
-                            <option value="HR">Human Resources</option>
-                            <option value="IT">Information Technology</option>
-                            <option value="Finance">Finance</option>
-                            <option value="Operations">Operations</option>
-                            <option value="Facilities">Facilities</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
                         <label for="description" class="form-label">Description</label>
                         <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
                     </div>
@@ -226,17 +144,6 @@
                         <input type="text" class="form-control" id="editSubject" name="subject" required>
                     </div>
                     <div class="mb-3">
-                        <label for="editDepartment" class="form-label">Department</label>
-                        <select class="form-select" id="editDepartment" name="department" required>
-                            <option value="HR">Human Resources</option>
-                            <option value="IT">Information Technology</option>
-                            <option value="Finance">Finance</option>
-                            <option value="Operations">Operations</option>
-                            <option value="Facilities">Facilities</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
                         <label for="editDescription" class="form-label">Description</label>
                         <textarea class="form-control" id="editDescription" name="description" rows="5" required></textarea>
                     </div>
@@ -263,21 +170,14 @@
                     <div class="col-md-6">
                         <p><strong>ID:</strong> <span id="viewId"></span></p>
                         <p><strong>Subject:</strong> <span id="viewSubject"></span></p>
-                        <p><strong>Department:</strong> <span id="viewDepartment"></span></p>
+                        <p><strong>Description:</strong> <span id="viewDescription"></span></p>
                     </div>
                     <div class="col-md-6">
                         <p><strong>Date:</strong> <span id="viewDate"></span></p>
                         <p><strong>Status:</strong> <span id="viewStatus"></span></p>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <strong>Description:</strong>
-                    <p id="viewDescription" class="p-2 border rounded"></p>
-                </div>
-                <div class="mb-3">
-                    <strong>Admin Remarks:</strong>
-                    <p id="viewRemarks" class="p-2 border rounded"></p>
-                </div>
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

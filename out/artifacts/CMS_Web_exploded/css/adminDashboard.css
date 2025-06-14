@@ -10,19 +10,45 @@ body {
     min-height: 100vh;
 }
 
-#logout_btn {
-    padding-right: 1px;
-    padding-left: 10px;
-}
-
 .navbar {
     background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    padding: 15px 0;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-brand {
     font-weight: 600;
     letter-spacing: 0.5px;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.85) !important;
+    font-weight: 500;
+    transition: color 0.3s, transform 0.2s;
+    padding: 5px 15px;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffffff !important;
+    transform: translateY(-2px);
+}
+
+.navbar-nav .nav-link.active {
+    color: white !important;
+    font-weight: 600;
+}
+
+.navbar .btn-light {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+
+.navbar .btn-light:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
 }
 
 .card {
@@ -38,16 +64,21 @@ body {
     box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
 }
 
-.card-title {
+h2 {
     color: #4a5568;
-    font-size: 16px;
-    font-weight: 500;
+    font-weight: 600;
+    position: relative;
+    margin-bottom: 10px;
 }
 
-.card-text {
-    font-weight: 600;
-    font-size: 24px;
-    margin-top: 8px;
+h2:after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 50px;
+    height: 3px;
+    background: linear-gradient(to right, #667eea, #764ba2);
 }
 
 .status-pending {
@@ -92,9 +123,35 @@ body {
     border: none;
 }
 
+.btn-danger {
+    background: linear-gradient(135deg, #ff6b6b, #ee5253);
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #ee5253, #d63031);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(238, 82, 83, 0.4);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #feca57, #ff9f43);
+    border: none;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #ff9f43, #ee8d2d);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 159, 67, 0.4);
+    color: white;
+}
+
 .table {
     border-collapse: separate;
     border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .table th {
@@ -105,6 +162,7 @@ body {
     text-transform: uppercase;
     font-size: 12px;
     letter-spacing: 0.5px;
+    padding: 15px 10px;
 }
 
 .table tbody tr {
@@ -121,21 +179,50 @@ body {
     letter-spacing: 0.5px;
 }
 
-h2 {
-    color: #4a5568;
-    font-weight: 600;
-    position: relative;
-    margin-bottom: 10px;
+.badge.bg-warning {
+    background-color: #ffeaa7 !important;
+    color: #b68c09;
 }
 
-h2:after {
-    content: "";
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 50px;
-    height: 3px;
-    background: linear-gradient(to right, #667eea, #764ba2);
+.badge.bg-info {
+    background-color: #81ecec !important;
+    color: #0984e3;
+}
+
+.badge.bg-success {
+    background-color: #55efc4 !important;
+    color: #00b894;
+}
+
+.badge.bg-danger {
+    background-color: #ff7675 !important;
+    color: #d63031;
+}
+
+.form-control, .form-select {
+    padding: 12px 15px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.3s;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.btn-group .btn {
+    border: 1px solid;
+    font-size: 13px;
+}
+
+.input-group .form-control {
+    border-radius: 8px 0 0 8px;
+}
+
+.input-group .btn {
+    border-radius: 0 8px 8px 0;
 }
 
 .modal-content {
@@ -156,37 +243,5 @@ h2:after {
 }
 
 .modal .btn-close {
-    color: white;
     filter: brightness(0) invert(1);
-}
-
-.form-label {
-    color: #4a5568;
-    font-weight: 500;
-    margin-bottom: 8px;
-}
-
-.form-control, .form-select {
-    padding: 12px 15px;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    transition: all 0.3s;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
-}
-
-.btn-group .btn {
-    border: 1px solid;
-    font-size: 13px;
-}
-
-.input-group .form-control {
-    border-radius: 8px 0 0 8px;
-}
-
-.input-group .btn {
-    border-radius: 0 8px 8px 0;
 }

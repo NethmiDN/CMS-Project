@@ -18,26 +18,30 @@ public class SignInServlet extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
+        // Get the user from login method
         User user = new UserModel().login(username, password);
 
         if (user != null) {
-            HttpSession session = req.getSession();
-            session.setAttribute("username", user.getUsername());
-            session.setAttribute("id", user.getId());
-            session.setAttribute("role", user.getRole());
+            HttpSession session = req.getSession(true); // Create new session if needed
 
-            // Redirect based on user role
-            if ("admin".equalsIgnoreCase(user.getRole())) {
-                resp.sendRedirect(req.getContextPath() + "/jsp/AdminDashboard.jsp");
-            } else if ("employee".equalsIgnoreCase(user.getRole())) {
-                resp.sendRedirect(req.getContextPath() + "/jsp/EmployeeDashboard.jsp");
+            // Store the complete user object in session
+            session.setAttribute("user", user);
+
+            // Debug statement to verify user is correctly set
+            System.out.println("User stored in session: ID=" + user.getId() + ", Role=" + user.getRole());
+
+            // Redirect based on user role - use case insensitive comparison
+            if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/admin");
+            } else if ("EMPLOYEE".equalsIgnoreCase(user.getRole())) {
+                resp.sendRedirect(req.getContextPath() + "/employee/dashboard");
             } else {
                 // Handle unexpected roles
-                resp.sendRedirect(req.getContextPath() + "/jsp/signin.jsp?error=Invalid+role");
+                resp.sendRedirect(req.getContextPath() + "/index.jsp?error=Invalid+role");
             }
         } else {
-            // Redirect back to signin page when login fails (not index.jsp)
-            resp.sendRedirect(req.getContextPath() + "/jsp/signin.jsp?error=Invalid+username+or+password");
+            // Redirect back to signin page when login fails
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?error=Invalid+username+or+password");
         }
     }
 }
