@@ -13,29 +13,24 @@ public class ComplaintsModel {
 
     // Add a complaint
     public boolean addComplaint(Complaints complaint) {
-        String sql = "INSERT INTO complaints ( user_id, subject, description, status,date_submitted) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "INSERT INTO complaints (user_id, subject, description, status, date_submitted) VALUES (?, ?, ?, ?, ?)";
+        try (Connection conn = DataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, complaint.getUserId());
-            ps.setString(2, complaint.getSubject());
-            ps.setString(3, complaint.getDescription());
-            ps.setString(4, complaint.getStatus());
-            ps.setDate(5, (Date) complaint.getDate_submitted());
+            stmt.setInt(1, complaint.getUserId());
+            stmt.setString(2, complaint.getSubject());
+            stmt.setString(3, complaint.getDescription());
+            stmt.setString(4, complaint.getStatus());
+            stmt.setTimestamp(5, new Timestamp(complaint.getDate_submitted().getTime()));
 
-            System.out.println("Executing SQL: " + sql);
-            System.out.println("With values: " + complaint.getSubject() + ", " + complaint.getDescription() + ", " + complaint.getStatus() + ", " + complaint.getUserId());
+            int rowsInserted = stmt.executeUpdate();
+            return rowsInserted > 0;
 
-            int rows = ps.executeUpdate();
-            System.out.println("Rows inserted: " + rows);
-
-            return rows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-
 
     // Update a complaint
     public void updateComplaint(Complaints complaint) {
@@ -67,25 +62,22 @@ public class ComplaintsModel {
     }
 
 
-    public boolean deleteComplaint(int complaintId) {
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "DELETE FROM complaints WHERE id = ?")) {
+    public boolean deleteComplaint(int id) {
+        String sql = "DELETE FROM complaints WHERE id = ?";
+        try (Connection conn = DataSource.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            statement.setInt(1, complaintId);
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
 
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            System.err.println("Error deleting complaint: " + e.getMessage());
             return false;
         }
     }
 
     // Get a complaint by ID
     public Complaints getComplaintById(int id) throws SQLException {
-        Complaints complaint = null;
         String sql = "SELECT * FROM complaints WHERE id = ?";
         try (Connection conn = DataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -94,64 +86,42 @@ public class ComplaintsModel {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                complaint = new Complaints();
-                complaint.setId(rs.getInt("id"));
-                complaint.setSubject(rs.getString("subject"));
-                complaint.setDescription(rs.getString("description"));
-                complaint.setUserId(rs.getInt("user_id"));
-                complaint.setDate_submitted(rs.getDate("date_submitted"));
-                complaint.setStatus(rs.getString("status"));
+                Complaints c = new Complaints();
+                c.setId(rs.getInt("id"));
+                c.setUserId(rs.getInt("user_id"));
+                c.setSubject(rs.getString("subject"));
+                c.setDescription(rs.getString("description"));
+                c.setStatus(rs.getString("status"));
+                c.setDate_submitted(rs.getTimestamp("date_submitted"));
+
+                return c;
             }
+
         }
-        return complaint;
-    }
-
-
-    public List<Complaints> getComplaintsByUserId(int userId) {
-        List<Complaints> complaints = new ArrayList<>();
-        try (Connection connection = getConnection();
-             PreparedStatement statement = connection.prepareStatement(
-                     "SELECT * FROM complaints WHERE user_id = ? ORDER BY id DESC")) {
-
-            statement.setInt(1, userId);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Complaints complaint = mapComplaintFromResultSet(resultSet);
-                    complaints.add(complaint);
-                }
-            }
-            System.out.println("Retrieved " + complaints.size() + " complaints for user ID: " + userId);
-        } catch (SQLException e) {
-            System.err.println("Error retrieving complaints: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return complaints;
-    }
-
-    private Complaints mapComplaintFromResultSet(ResultSet resultSet) throws SQLException {
-        Complaints complaint = new Complaints();
-        complaint.setId(resultSet.getInt("id"));
-        complaint.setUserId(resultSet.getInt("user_id"));
-        complaint.setSubject(resultSet.getString("subject"));
-        complaint.setDescription(resultSet.getString("description"));
-        complaint.setDate_submitted(resultSet.getTimestamp("date_submitted"));
-        complaint.setStatus(resultSet.getString("status"));
-        return complaint;
+        return null;
     }
 
     // Get all complaints for a user
     public List<Complaints> getComplaintsByUser(String userId) {
         List<Complaints> list = new ArrayList<>();
-        String sql = "SELECT * FROM complaints WHERE user_id=? ORDER BY date_submitted DESC";
+        String sql = "SELECT * FROM complaints WHERE user_id = ? ORDER BY date_submitted DESC";
 
         try (Connection conn = DataSource.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            ps.setInt(1, Integer.parseInt(userId));
-            ResultSet rs = ps.executeQuery();
+            stmt.setString(1, userId);
+            ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                list.add(mapResultSetToComplaint(rs));
+                Complaints c = new Complaints();
+                c.setId(rs.getInt("id"));
+                c.setUserId(rs.getInt("user_id"));
+                c.setSubject(rs.getString("subject"));
+                c.setDescription(rs.getString("description"));
+                c.setStatus(rs.getString("status"));
+                c.setDate_submitted(rs.getTimestamp("date_submitted"));
+
+                list.add(c);
             }
 
         } catch (SQLException e) {
@@ -159,18 +129,6 @@ public class ComplaintsModel {
         }
 
         return list;
-    }
-
-    // Helper to map ResultSet to Complaints DTO
-    private Complaints mapResultSetToComplaint(ResultSet rs) throws SQLException {
-        Complaints c = new Complaints();
-        c.setId(rs.getInt("id"));
-        c.setUserId(rs.getInt("user_id"));
-        c.setSubject(rs.getString("subject"));
-        c.setDescription(rs.getString("description"));
-        c.setStatus(rs.getString("status"));
-        c.setDate_submitted(rs.getTimestamp("date_submitted"));
-        return c;
     }
 
     public List<Complaints> getAllComplaints() throws SQLException {

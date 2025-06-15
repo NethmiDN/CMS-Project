@@ -84,32 +84,35 @@ public class EmployeeServlet extends HttpServlet {
 
                 if (subject == null || subject.trim().isEmpty() || description == null || description.trim().isEmpty()) {
                     req.setAttribute("error", "Subject and description are required.");
-                    req.getRequestDispatcher("/employee").forward(req, resp);
-                    return;
+                    List<Complaints> userComplaints = complaintsModel.getComplaintsByUser(String.valueOf(user.getId()));
+                    req.setAttribute("userComplaints", userComplaints);
+                    req.getRequestDispatcher("/jsp/EmployeeDashboard.jsp").forward(req, resp);
+                    break;
                 }
+
                 try {
                     Complaints newComplaint = new Complaints();
                     newComplaint.setSubject(subject);
                     newComplaint.setDescription(description);
                     newComplaint.setStatus("Pending");
                     newComplaint.setUserId(user.getId());
+                    newComplaint.setDate_submitted(new java.util.Date()); // Set date here
 
                     boolean success = complaintsModel.addComplaint(newComplaint);
                     if (success) {
                         session.setAttribute("msg", "Complaint submitted successfully.");
                         resp.sendRedirect(req.getContextPath() + "/employee");
                     } else {
-                        // Instead of forwarding to submitComplaint.jsp,
-                        // set error attribute and reload employee dashboard with user's complaints and error
                         req.setAttribute("error", "Failed to submit complaint. Please try again.");
                         List<Complaints> userComplaints = complaintsModel.getComplaintsByUser(String.valueOf(user.getId()));
                         req.setAttribute("userComplaints", userComplaints);
                         req.getRequestDispatcher("/jsp/EmployeeDashboard.jsp").forward(req, resp);
                     }
-                } finally {
-                    break;
-
+                } catch (Exception e) {
+                    throw new ServletException("Error submitting complaint", e);
                 }
+
+                break;
 
             case "/updateComplaint":
                 int editId = Integer.parseInt(req.getParameter("complaintId"));

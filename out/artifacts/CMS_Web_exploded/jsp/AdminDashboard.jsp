@@ -1,20 +1,16 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Nethmi
-  Date: 6/13/2025
-  Time: 9:01 PM
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>--%>
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Admin Dashboard</title>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Complaints Management</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/adminDashboard.css">
-    <meta name="contextPath" content="${pageContext.request.contextPath}">
 </head>
 <body>
 <!-- Navigation Bar -->
@@ -26,171 +22,199 @@
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <div class="d-flex">
-                <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-light btn-sm">Logout</a>
+                <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-light btn-sm" id="logout_btn">Logout</a>
             </div>
         </div>
     </div>
 </nav>
 
 <div class="container">
+    <!-- Dashboard Header -->
     <div class="row mb-4">
-        <div class="col">
-            <h2>Complaints Dashboard</h2>
-            <p class="text-muted">Manage all system complaints</p>
+        <div class="col-md-8">
+            <h2>Admin Dashboard - Complaints List</h2>
+            <p class="text-muted">Manage all user complaints</p>
         </div>
     </div>
+
+    <!-- Display messages -->
+    <% if(request.getParameter("error") != null) { %>
+    <div class="alert alert-danger">
+        <%= request.getParameter("error") %>
+    </div>
+    <% } %>
+
+    <% if(request.getParameter("success") != null) { %>
+    <div class="alert alert-success">
+        <%= request.getParameter("success") %>
+    </div>
+    <% } %>
 
     <!-- Complaints Table -->
     <div class="card">
         <div class="card-body">
-            <table class="table table-hover" id="complaintsTable">
+            <table class="table table-hover">
                 <thead>
                 <tr>
                     <th>ID</th>
+                    <th>User ID</th>
                     <th>Subject</th>
                     <th>Description</th>
-                    <th>Submitted By</th>
-                    <th>Date</th>
                     <th>Status</th>
+                    <th>Date Submitted</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>
                 <%
-                    java.util.List<com.example.cms.dto.Complaints> complaintsList =
-                            (java.util.List<com.example.cms.dto.Complaints>) request.getAttribute("complaints");
-                    if (complaintsList != null && !complaintsList.isEmpty()) {
-                        for (com.example.cms.dto.Complaints complaint : complaintsList) {
+                    java.util.List<com.example.cms.dto.Complaints> complaints = (java.util.List<com.example.cms.dto.Complaints>) request.getAttribute("complaints");
+                    if (complaints != null && !complaints.isEmpty()) {
+                        for (com.example.cms.dto.Complaints complaint : complaints) {
                 %>
                 <tr>
                     <td><%= complaint.getId() %></td>
+                    <td><%= complaint.getUserId() %></td>
                     <td><%= complaint.getSubject() %></td>
                     <td><%= complaint.getDescription() %></td>
-                    <td><%= complaint.getUserId() %></td>
+                    <td>
+                        <span class="badge <%= complaint.getStatus().equals("Pending") ? "bg-warning" :
+                            complaint.getStatus().equals("In Progress") ? "bg-info" :
+                            complaint.getStatus().equals("Resolved") ? "bg-success" : "bg-danger" %>">
+                            <%= complaint.getStatus() %>
+                        </span>
+                    </td>
                     <td><%= complaint.getDate_submitted() %></td>
                     <td>
-            <span class="badge <%= complaint.getStatus().equals("Pending") ? "bg-warning" :
-                complaint.getStatus().equals("In Progress") ? "bg-info" :
-                complaint.getStatus().equals("Resolved") ? "bg-success" : "bg-danger" %>">
-                <%= complaint.getStatus() %>
-            </span>
-                    </td>
-                    <td>
+                        <!-- View complaint details -->
                         <form action="${pageContext.request.contextPath}/admin/viewComplaint" method="get" style="display:inline;">
                             <input type="hidden" name="id" value="<%= complaint.getId() %>" />
-                            <button type="submit" class="btn btn-sm btn-primary">
+                            <button type="submit" class="btn btn-sm btn-info" title="View Complaint">
                                 <i class="bi bi-eye"></i>
                             </button>
                         </form>
 
-                        <button class="btn btn-sm btn-warning update-btn" data-id="<%= complaint.getId() %>"
-                                data-bs-toggle="modal" data-bs-target="#updateStatusModal">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="<%= complaint.getId() %>"
-                                data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <!-- Update status modal trigger -->
+                        <form action="${pageContext.request.contextPath}/admin/editStatus" method="get" style="display:inline;">
+                            <input type="hidden" name="id" value="<%= complaint.getId() %>" />
+                            <button type="submit" class="btn btn-sm btn-warning" title="Edit Status">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </form>
+
+                        <!-- Delete complaint -->
+                        <form action="${pageContext.request.contextPath}/admin" method="post" style="display:inline;"
+                              onsubmit="return confirm('Are you sure you want to delete this complaint?');">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="complaintId" value="<%= complaint.getId() %>">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Delete Complaint">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 <%
                     }
                 } else {
                 %>
-                <tr><td colspan="7" class="text-center">No complaints found</td></tr>
-                <% } %>
+                <tr>
+                    <td colspan="7" class="text-center">No complaints found.</td>
+                </tr>
+                <%
+                    }
+                %>
                 </tbody>
             </table>
         </div>
     </div>
 </div>
 
-<!-- View Complaint Modal -->
-<div class="modal fade" id="viewComplaintModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Complaint Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Complaint details will be loaded here dynamically -->
-                <div id="complaintDetails">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <p><strong>ID:</strong> <span id="viewId"></span></p>
-                            <p><strong>Subject:</strong> <span id="viewSubject"></span></p>
-                            <p><strong>Description:</strong> <span id="viewDescription"></span></p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Submitted By:</strong> <span id="viewUser"></span></p>
-                            <p><strong>Date:</strong> <span id="viewDate"></span></p>
-                            <p><strong>Status:</strong> <span id="viewStatus"></span></p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Update Status Modal -->
-<div class="modal fade" id="updateStatusModal" tabindex="-1">
+<%-- Modal to edit status --%>
+<%
+    com.example.cms.dto.Complaints complaint = (com.example.cms.dto.Complaints) request.getAttribute("complaint");
+    if (complaint != null) {
+%>
+<div class="modal show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Update Complaint Status</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="updateStatusForm" action="${pageContext.request.contextPath}/admin/updateComplaint" method="post">
+            <form action="${pageContext.request.contextPath}/admin" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Status for Complaint #<%= complaint.getId() %></h5>
+                    <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn-close" aria-label="Close"></a>
+                </div>
                 <div class="modal-body">
-                    <input type="hidden" id="complaintId" name="complaintId">
+                    <input type="hidden" name="action" value="updateStatus">
+                    <input type="hidden" name="complaintId" value="<%= complaint.getId() %>">
 
                     <div class="mb-3">
                         <label for="statusSelect" class="form-label">Status</label>
                         <select class="form-select" id="statusSelect" name="status" required>
-                            <option value="Pending">Pending</option>
-                            <option value="Resolved">Resolved</option>
+                            <option value="Pending" <%= "Pending".equals(complaint.getStatus()) ? "selected" : "" %>>Pending</option>
+                            <option value="In Progress" <%= "In Progress".equals(complaint.getStatus()) ? "selected" : "" %>>In Progress</option>
+                            <option value="Resolved" <%= "Resolved".equals(complaint.getStatus()) ? "selected" : "" %>>Resolved</option>
                         </select>
                     </div>
-
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn btn-secondary">Cancel</a>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+<%
+    }
+%>
 
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
+<%-- Modal to view complaint details --%>
+<%
+    com.example.cms.dto.Complaints viewComplaint = (com.example.cms.dto.Complaints) request.getAttribute("viewComplaint");
+    if (viewComplaint != null) {
+%>
+<div class="modal show" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title">Complaint Details #<%= viewComplaint.getId() %></h5>
+                <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn-close" aria-label="Close"></a>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete this complaint? This action cannot be undone.</p>
+                <div class="mb-3">
+                    <strong>Subject:</strong>
+                    <p><%= viewComplaint.getSubject() %></p>
+                </div>
+                <div class="mb-3">
+                    <strong>Description:</strong>
+                    <p><%= viewComplaint.getDescription() %></p>
+                </div>
+                <div class="mb-3">
+                    <strong>Status:</strong>
+                    <span class="badge <%= viewComplaint.getStatus().equals("Pending") ? "bg-warning" :
+                        viewComplaint.getStatus().equals("In Progress") ? "bg-info" :
+                        viewComplaint.getStatus().equals("Resolved") ? "bg-success" : "bg-danger" %>">
+                        <%= viewComplaint.getStatus() %>
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <strong>Submitted By:</strong>
+                    <p>User #<%= viewComplaint.getUserId() %></p>
+                </div>
+                <div class="mb-3">
+                    <strong>Date Submitted:</strong>
+                    <p><%= viewComplaint.getDate_submitted() %></p>
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteForm" action="${pageContext.request.contextPath}/admin/deleteComplaint" method="post">
-                    <input type="hidden" id="deleteComplaintId" name="complaintId">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
+                <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn btn-secondary">Close</a>
             </div>
         </div>
     </div>
 </div>
+<%
+    }
+%>
 
+<!-- Bootstrap JS (for modal functionality) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

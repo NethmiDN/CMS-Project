@@ -17,18 +17,34 @@ public class AdminServlet extends HttpServlet {
 
     private final ComplaintsModel complaintsModel = new ComplaintsModel();
 
+    // In AdminServlet.java, add a new path handler for editing
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getPathInfo();
 
         try {
             if (path != null && path.equals("/viewComplaint")) {
-                // Handle viewing a single complaint
+                // Load complaint by id to display details
                 int id = Integer.parseInt(request.getParameter("id"));
                 Complaints complaint = complaintsModel.getComplaintById(id);
-                request.setAttribute("complaint", complaint);
+                request.setAttribute("viewComplaint", complaint); // Use a different attribute name
 
-                request.getRequestDispatcher("/jsp/viewComplaint.jsp").forward(request, response);
+                // Also load all complaints for table display
+                List<Complaints> complaintsList = complaintsModel.getAllComplaints();
+                request.setAttribute("complaints", complaintsList);
+
+                request.getRequestDispatcher("/jsp/AdminDashboard.jsp").forward(request, response);
+            } else if (path != null && path.equals("/editStatus")) {
+                // Load complaint by id to edit status
+                int id = Integer.parseInt(request.getParameter("id"));
+                Complaints complaint = complaintsModel.getComplaintById(id);
+                request.setAttribute("complaint", complaint); // Use this attribute name for edit modal
+
+                // Also load all complaints for table display
+                List<Complaints> complaintsList = complaintsModel.getAllComplaints();
+                request.setAttribute("complaints", complaintsList);
+
+                request.getRequestDispatcher("/jsp/AdminDashboard.jsp").forward(request, response);
             } else {
                 // Default: load all complaints
                 List<Complaints> complaintsList = complaintsModel.getAllComplaints();
@@ -40,25 +56,22 @@ public class AdminServlet extends HttpServlet {
         }
     }
 
-
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
 
-        if ("updateStatus".equals(action)) {
-            int complaintId = Integer.parseInt(request.getParameter("complaintId"));
-            String status = request.getParameter("status");
+        try {
+            if ("updateStatus".equals(action)) {
+                int complaintId = Integer.parseInt(request.getParameter("complaintId"));
+                String status = request.getParameter("status");
 
-            try {
                 complaintsModel.updateComplaintStatus(complaintId, status);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            } else if ("delete".equals(action)) {
+                int complaintId = Integer.parseInt(request.getParameter("complaintId"));
+                complaintsModel.deleteComplaintById(complaintId);
             }
-
-        } else if ("delete".equals(action)) {
-            int complaintId = Integer.parseInt(request.getParameter("complaintId"));
-
-            complaintsModel.deleteComplaintById(complaintId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
         // Redirect back to dashboard to reflect changes
