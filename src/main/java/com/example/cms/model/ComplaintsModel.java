@@ -13,21 +13,27 @@ public class ComplaintsModel {
 
     // Add a complaint
     public boolean addComplaint(Complaints complaint) {
-        String sql = "INSERT INTO complaints (user_id, subject, description, status, date_submitted) VALUES (?, ?, ?, ?, NOW())";
+        String sql = "INSERT INTO complaints ( user_id, subject, description, status,date_submitted) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setInt(1, complaint.getUserId());
             ps.setString(2, complaint.getSubject());
             ps.setString(3, complaint.getDescription());
             ps.setString(4, complaint.getStatus());
+            ps.setDate(5, (Date) complaint.getDate_submitted());
+
+            System.out.println("Executing SQL: " + sql);
+            System.out.println("With values: " + complaint.getSubject() + ", " + complaint.getDescription() + ", " + complaint.getStatus() + ", " + complaint.getUserId());
 
             int rows = ps.executeUpdate();
-            return rows > 0;
+            System.out.println("Rows inserted: " + rows);
 
+            return rows > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
 
@@ -47,7 +53,7 @@ public class ComplaintsModel {
     }
 
     public boolean updateComplaintStatus(int id, String status) throws SQLException {
-        String sql = "UPDATE complaints SET status = ?, remarks = ? WHERE id = ?";
+        String sql = "UPDATE complaints SET status = ? WHERE id = ?";
 
         try (Connection conn = DataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -79,27 +85,24 @@ public class ComplaintsModel {
 
     // Get a complaint by ID
     public Complaints getComplaintById(int id) throws SQLException {
-        String sql = "SELECT * FROM complaints WHERE id = ?";
         Complaints complaint = null;
-
+        String sql = "SELECT * FROM complaints WHERE id = ?";
         try (Connection conn = DataSource.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
-            try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) {
-                    complaint = new Complaints();
-                    complaint.setId(rs.getInt("id"));
-                    complaint.setSubject(rs.getString("subject"));
-                    complaint.setDescription(rs.getString("description"));
-                    complaint.setUserId(rs.getInt("user_id"));
-                    complaint.setDate_submitted(rs.getDate("date_submitted"));
-                    complaint.setStatus(rs.getString("status"));
-//                    complaint.setRemarks(rs.getString("remarks"));
-                }
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                complaint = new Complaints();
+                complaint.setId(rs.getInt("id"));
+                complaint.setSubject(rs.getString("subject"));
+                complaint.setDescription(rs.getString("description"));
+                complaint.setUserId(rs.getInt("user_id"));
+                complaint.setDate_submitted(rs.getDate("date_submitted"));
+                complaint.setStatus(rs.getString("status"));
             }
         }
-
         return complaint;
     }
 

@@ -19,6 +19,14 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container">
+        <%
+            String msg = request.getParameter("msg");
+            if ("success".equals(msg)) {
+        %>
+        <div class="alert alert-success">Complaint submitted successfully.</div>
+        <%
+            }
+        %>
         <a class="navbar-brand" href="#">Complaint Management System</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -79,12 +87,6 @@
             </span>
                     </td>
                     <td>
-                        <form action="${pageContext.request.contextPath}/employee/viewComplaint" method="get" style="display:inline;">
-                            <input type="hidden" name="complaintId" value="<%= complaint.getId() %>">
-                            <button type="submit" class="btn btn-sm btn-primary" title="View">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </form>
 
                         <% if (!complaint.getStatus().equals("Resolved") && !complaint.getStatus().equals("Rejected")) { %>
                         <form action="${pageContext.request.contextPath}/employee/editComplaintForm" method="get" style="display:inline;">
@@ -126,7 +128,19 @@
                 <h5 class="modal-title">Submit New Complaint</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="newComplaintForm" action="${pageContext.request.contextPath}/employee/AddComplaintServlet" method="post">
+            <c:if test="${not empty error}">
+                <div style="color: red; font-weight: bold; margin-bottom: 10px;">
+                        ${error}
+                </div>
+            </c:if>
+
+            <c:if test="${not empty sessionScope.msg}">
+                <div style="color: green; font-weight: bold; margin-bottom: 10px;">
+                        ${sessionScope.msg}
+                </div>
+                <c:remove var="msg" scope="session"/>
+            </c:if>
+            <form action="${pageContext.request.contextPath}/employee/submitComplaint" method="post">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="subject" class="form-label">Subject</label>
@@ -141,7 +155,11 @@
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Submit Complaint</button>
                 </div>
+                <c:if test="${not empty error}">
+                    <div style="color:red;">${error}</div>
+                </c:if>
             </form>
+
         </div>
     </div>
 </div>

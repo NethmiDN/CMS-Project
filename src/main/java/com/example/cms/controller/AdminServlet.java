@@ -1,14 +1,12 @@
 package com.example.cms.controller;
 
 import com.example.cms.dto.Complaints;
-import com.example.cms.dto.User;
 import com.example.cms.model.ComplaintsModel;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -21,18 +19,27 @@ public class AdminServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // Fetch all complaints from DB
-        List<Complaints> complaintsList = null;
+        String path = request.getPathInfo();
+
         try {
-            complaintsList = complaintsModel.getAllComplaints();
-        } catch (SQLException e) {
+            if (path != null && path.equals("/viewComplaint")) {
+                // Handle viewing a single complaint
+                int id = Integer.parseInt(request.getParameter("id"));
+                Complaints complaint = complaintsModel.getComplaintById(id);
+                request.setAttribute("complaint", complaint);
+
+                request.getRequestDispatcher("/jsp/viewComplaint.jsp").forward(request, response);
+            } else {
+                // Default: load all complaints
+                List<Complaints> complaintsList = complaintsModel.getAllComplaints();
+                request.setAttribute("complaints", complaintsList);
+                request.getRequestDispatcher("/jsp/AdminDashboard.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        request.setAttribute("complaints", complaintsList);
-
-        // Forward to the admin dashboard JSP
-        request.getRequestDispatcher("/jsp/AdminDashboard.jsp").forward(request, response);
     }
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

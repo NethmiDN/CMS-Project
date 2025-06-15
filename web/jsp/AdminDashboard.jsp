@@ -76,10 +76,13 @@
             </span>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-primary view-btn" data-id="<%= complaint.getId() %>"
-                                data-bs-toggle="modal" data-bs-target="#viewComplaintModal">
-                            <i class="bi bi-eye"></i>
-                        </button>
+                        <form action="${pageContext.request.contextPath}/admin/viewComplaint" method="get" style="display:inline;">
+                            <input type="hidden" name="id" value="<%= complaint.getId() %>" />
+                            <button type="submit" class="btn btn-sm btn-primary">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </form>
+
                         <button class="btn btn-sm btn-warning update-btn" data-id="<%= complaint.getId() %>"
                                 data-bs-toggle="modal" data-bs-target="#updateStatusModal">
                             <i class="bi bi-pencil"></i>
@@ -151,7 +154,6 @@
                         <label for="statusSelect" class="form-label">Status</label>
                         <select class="form-select" id="statusSelect" name="status" required>
                             <option value="Pending">Pending</option>
-                            <option value="In Progress">In Progress</option>
                             <option value="Resolved">Resolved</option>
                         </select>
                     </div>

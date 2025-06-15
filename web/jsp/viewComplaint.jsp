@@ -12,21 +12,22 @@
 %>
 <html>
 <head>
-    <title>View Complaint</title>
+    <title>Complaint Details</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="p-4">
-<div class="container">
+<body>
+<div class="container mt-5">
     <h2>Complaint Details</h2>
-    <table class="table table-bordered">
-        <tr><th>ID</th><td><%= complaint.getId() %></td></tr>
-        <tr><th>Subject</th><td><%= complaint.getSubject() %></td></tr>
-        <tr><th>Description</th><td><%= complaint.getDescription() %></td></tr>
-        <tr><th>Status</th><td><%= complaint.getStatus() %></td></tr>
-        <tr><th>Date Submitted</th><td><%= complaint.getDate_submitted() %></td></tr>
-    </table>
-    <a href="<%= request.getContextPath() %>/employee" class="btn btn-secondary">Back to Dashboard</a>
+    <hr>
+    <p><strong>ID:</strong> <%= complaint.getId() %></p>
+    <p><strong>Subject:</strong> <%= complaint.getSubject() %></p>
+    <p><strong>Description:</strong> <%= complaint.getDescription() %></p>
+    <p><strong>Submitted By:</strong> <%= complaint.getUserId() %></p>
+    <p><strong>Date:</strong> <%= complaint.getDate_submitted() %></p>
+    <p><strong>Status:</strong> <%= complaint.getStatus() %></p>
+
+    <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn btn-secondary mt-3">Back to Dashboard</a>
+
 </div>
 </body>
 </html>
-
