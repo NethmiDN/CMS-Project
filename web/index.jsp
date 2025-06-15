@@ -32,7 +32,6 @@
 
         <button type="submit" class="btn">Sign In</button>
         <div class="links">
-            <a href="forgotPassword.jsp">Forgot Password?</a><br>
             Don't have an account? <a href="${pageContext.request.contextPath}/jsp/signup.jsp">Sign up</a>
         </div>
     </form>

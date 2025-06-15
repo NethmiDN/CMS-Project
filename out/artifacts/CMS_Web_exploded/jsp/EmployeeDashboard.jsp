@@ -79,21 +79,31 @@
             </span>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-primary view-btn" data-id="<%= complaint.getId() %>"
-                                data-bs-toggle="modal" data-bs-target="#viewComplaintModal">
-                            <i class="bi bi-eye"></i>
-                        </button>
+                        <form action="${pageContext.request.contextPath}/employee/viewComplaint" method="get" style="display:inline;">
+                            <input type="hidden" name="complaintId" value="<%= complaint.getId() %>">
+                            <button type="submit" class="btn btn-sm btn-primary" title="View">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </form>
+
                         <% if (!complaint.getStatus().equals("Resolved") && !complaint.getStatus().equals("Rejected")) { %>
-                        <button class="btn btn-sm btn-warning edit-btn" data-id="<%= complaint.getId() %>"
-                                data-bs-toggle="modal" data-bs-target="#editComplaintModal">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="<%= complaint.getId() %>"
-                                data-bs-toggle="modal" data-bs-target="#deleteConfirmModal">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <form action="${pageContext.request.contextPath}/employee/editComplaintForm" method="get" style="display:inline;">
+                            <input type="hidden" name="complaintId" value="<%= complaint.getId() %>">
+                            <button type="submit" class="btn btn-sm btn-warning" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                        </form>
+
+                        <form action="${pageContext.request.contextPath}/employee/deleteComplaint" method="post" style="display:inline;"
+                              onsubmit="return confirm('Are you sure you want to delete this complaint?');">
+                            <input type="hidden" name="complaintId" value="<%= complaint.getId() %>">
+                            <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
                         <% } %>
                     </td>
+
                 </tr>
                 <%
                     }
@@ -116,7 +126,7 @@
                 <h5 class="modal-title">Submit New Complaint</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="newComplaintForm" action="${pageContext.request.contextPath}/employee/submitComplaint" method="post">
+            <form id="newComplaintForm" action="${pageContext.request.contextPath}/employee/AddComplaintServlet" method="post">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="subject" class="form-label">Subject</label>
@@ -217,7 +227,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="${pageContext.request.contextPath}/js/employeeDashboard.js"></script>
 
 </body>
 </html>
