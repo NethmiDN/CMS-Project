@@ -40,9 +40,9 @@ public class SignUpServlet extends HttpServlet {
 
         boolean success = new UserModel().register(user);
         if (success) {
-            resp.sendRedirect(req.getContextPath() + "/jsp/signin.jsp?message=Registration+successful.+Please+log+in.");
+            resp.sendRedirect(req.getContextPath() + "/index.jsp?message=Registration+successful.+Please+log+in.");
         } else {
-            resp.sendRedirect(req.getContextPath() + "/index.jsp?error=Registration+failed.+User+may+already+exist");
+            resp.sendRedirect(req.getContextPath() + "/jsp/signup.jsp?error=Registration+failed.+User+may+already+exist");
         }
     }
 }

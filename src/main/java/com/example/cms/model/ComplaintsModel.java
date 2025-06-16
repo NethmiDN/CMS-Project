@@ -62,6 +62,7 @@ public class ComplaintsModel {
     }
 
 
+    // Use this method for deleting by complaint ID
     public boolean deleteComplaint(int id) {
         String sql = "DELETE FROM complaints WHERE id = ?";
         try (Connection conn = DataSource.getConnection();
@@ -156,7 +157,7 @@ public class ComplaintsModel {
     }
 
     public boolean deleteComplaintById(int complaintId) {
-        String sql = "DELETE FROM complaints WHERE complaint_id = ?";
+        String sql = "DELETE FROM complaints WHERE id = ?";
 
         try (Connection conn = DataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {

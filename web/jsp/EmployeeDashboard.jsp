@@ -89,12 +89,11 @@
                     <td>
 
                         <% if (!complaint.getStatus().equals("Resolved") && !complaint.getStatus().equals("Rejected")) { %>
-                        <form action="${pageContext.request.contextPath}/employee/editComplaintForm" method="get" style="display:inline;">
-                            <input type="hidden" name="complaintId" value="<%= complaint.getId() %>">
-                            <button type="submit" class="btn btn-sm btn-warning" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                        </form>
+                        <!-- Change this to redirect to the edit page instead of using a modal -->
+                        <a href="${pageContext.request.contextPath}/employee/editComplaintForm?complaintId=<%= complaint.getId() %>"
+                           class="btn btn-sm btn-warning" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </a>
 
                         <form action="${pageContext.request.contextPath}/employee/deleteComplaint" method="post" style="display:inline;"
                               onsubmit="return confirm('Are you sure you want to delete this complaint?');">

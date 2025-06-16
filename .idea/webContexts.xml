@@ -4,6 +4,7 @@
     <option name="state">
       <map>
         <entry key="file://$PROJECT_DIR$/web/jsp/AdminDashboard.jsp" value="file://$PROJECT_DIR$/web/jsp" />
+        <entry key="file://$PROJECT_DIR$/web/jsp/EmployeeDashboard.jsp" value="file://$PROJECT_DIR$/web/jsp" />
         <entry key="file://$PROJECT_DIR$/web/jsp/signin.jsp" value="file://$PROJECT_DIR$/web/jsp" />
       </map>
     </option>
