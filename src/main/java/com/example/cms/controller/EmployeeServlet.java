@@ -34,29 +34,23 @@ public class EmployeeServlet extends HttpServlet {
             return;
         }
 
-        if ("/viewComplaint".equals(path)) {
-            int id = Integer.parseInt(req.getParameter("complaintId"));
-            Complaints complaint = null;
-            try {
-                complaint = complaintsModel.getComplaintById(id);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            req.setAttribute("complaint", complaint);
-            req.getRequestDispatcher("/jsp/viewComplaint.jsp").forward(req, resp);
-            return;
-        }
-
         if ("/editComplaintForm".equals(path)) {
-            int id = Integer.parseInt(req.getParameter("complaintId"));
-            Complaints complaint = null;
             try {
-                complaint = complaintsModel.getComplaintById(id);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                int id = Integer.parseInt(req.getParameter("complaintId"));
+                Complaints complaint = complaintsModel.getComplaintById(id);
+
+                if (complaint == null || complaint.getUserId() != user.getId()) {
+                    session.setAttribute("error", "Complaint not found or access denied.");
+                    resp.sendRedirect(req.getContextPath() + "/employee");
+                    return;
+                }
+
+                req.setAttribute("complaint", complaint);
+                req.getRequestDispatcher("/jsp/editComplaint.jsp").forward(req, resp);
+            } catch (Exception e) {
+                session.setAttribute("error", "Invalid complaint ID.");
+                resp.sendRedirect(req.getContextPath() + "/employee");
             }
-            req.setAttribute("complaint", complaint);
-            req.getRequestDispatcher("/jsp/editComplaint.jsp").forward(req, resp);
             return;
         }
 
@@ -78,72 +72,36 @@ public class EmployeeServlet extends HttpServlet {
         }
 
         switch (path) {
-            case "/submitComplaint":
-                String subject = req.getParameter("subject");
-                String description = req.getParameter("description");
-
-                if (subject == null || subject.trim().isEmpty() || description == null || description.trim().isEmpty()) {
-                    req.setAttribute("error", "Subject and description are required.");
-                    List<Complaints> userComplaints = complaintsModel.getComplaintsByUser(String.valueOf(user.getId()));
-                    req.setAttribute("userComplaints", userComplaints);
-                    req.getRequestDispatcher("/jsp/EmployeeDashboard.jsp").forward(req, resp);
-                    break;
-                }
-
-                try {
-                    Complaints newComplaint = new Complaints();
-                    newComplaint.setSubject(subject);
-                    newComplaint.setDescription(description);
-                    newComplaint.setStatus("Pending");
-                    newComplaint.setUserId(user.getId());
-                    newComplaint.setDate_submitted(new java.util.Date()); // Set date here
-
-                    boolean success = complaintsModel.addComplaint(newComplaint);
-                    if (success) {
-                        session.setAttribute("msg", "Complaint submitted successfully.");
-                        resp.sendRedirect(req.getContextPath() + "/employee");
-                    } else {
-                        req.setAttribute("error", "Failed to submit complaint. Please try again.");
-                        List<Complaints> userComplaints = complaintsModel.getComplaintsByUser(String.valueOf(user.getId()));
-                        req.setAttribute("userComplaints", userComplaints);
-                        req.getRequestDispatcher("/jsp/EmployeeDashboard.jsp").forward(req, resp);
-                    }
-                } catch (Exception e) {
-                    throw new ServletException("Error submitting complaint", e);
-                }
-
-                break;
-
             case "/updateComplaint":
-                int editId = Integer.parseInt(req.getParameter("complaintId"));
-                Complaints existingComplaint = null;
                 try {
-                    existingComplaint = complaintsModel.getComplaintById(editId);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                if (existingComplaint != null && existingComplaint.getUserId() == user.getId()) {
-                    existingComplaint.setSubject(req.getParameter("subject"));
-                    existingComplaint.setDescription(req.getParameter("description"));
-                    complaintsModel.updateComplaint(existingComplaint);
-                }
-                resp.sendRedirect(req.getContextPath() + "/employee");
-                break;
+                    int complaintId = Integer.parseInt(req.getParameter("complaintId"));
+                    Complaints existing = complaintsModel.getComplaintById(complaintId);
 
-            case "/deleteComplaint":
-                int deleteId = Integer.parseInt(req.getParameter("complaintId"));
-                Complaints toDelete = null;
-                try {
-                    toDelete = complaintsModel.getComplaintById(deleteId);
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
+                    if (existing != null && existing.getUserId() == user.getId()) {
+                        if (existing.getStatus().equalsIgnoreCase("Resolved") || existing.getStatus().equalsIgnoreCase("Rejected")) {
+                            session.setAttribute("error", "Cannot edit resolved or rejected complaints.");
+                            resp.sendRedirect(req.getContextPath() + "/employee");
+                            return;
+                        }
+
+                        existing.setSubject(req.getParameter("subject"));
+                        existing.setDescription(req.getParameter("description"));
+
+                        if (complaintsModel.updateComplaint(existing)) {
+                            session.setAttribute("msg", "Complaint updated successfully.");
+                        } else {
+                            session.setAttribute("error", "Update failed.");
+                        }
+                    } else {
+                        session.setAttribute("error", "Invalid complaint or access denied.");
+                    }
+
+                    resp.sendRedirect(req.getContextPath() + "/employee");
+
+                } catch (Exception e) {
+                    session.setAttribute("error", "An error occurred: " + e.getMessage());
+                    resp.sendRedirect(req.getContextPath() + "/employee");
                 }
-                if (toDelete != null && toDelete.getUserId() == user.getId() &&
-                        !toDelete.getStatus().equalsIgnoreCase("Resolved") &&
-                        !toDelete.getStatus().equalsIgnoreCase("Rejected")) {
-                    complaintsModel.deleteComplaint(deleteId);
-                }
-                resp.sendRedirect(req.getContextPath() + "/employee");
                 break;
 
             default:

@@ -118,7 +118,6 @@
     </div>
 </div>
 
-<!-- Your modals remain the same -->
 <!-- New Complaint Modal -->
 <div class="modal fade" id="newComplaintModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -159,64 +158,6 @@
                 </c:if>
             </form>
 
-        </div>
-    </div>
-</div>
-
-<!-- Edit Complaint Modal -->
-<div class="modal fade" id="editComplaintModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit Complaint</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="editComplaintForm" action="${pageContext.request.contextPath}/employee/updateComplaint" method="post">
-                <div class="modal-body">
-                    <input type="hidden" id="editComplaintId" name="complaintId">
-                    <div class="mb-3">
-                        <label for="editSubject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" id="editSubject" name="subject" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="editDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="editDescription" name="description" rows="5" required></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Update Complaint</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<!-- View Complaint Modal -->
-<div class="modal fade" id="viewComplaintModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Complaint Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <p><strong>ID:</strong> <span id="viewId"></span></p>
-                        <p><strong>Subject:</strong> <span id="viewSubject"></span></p>
-                        <p><strong>Description:</strong> <span id="viewDescription"></span></p>
-                    </div>
-                    <div class="col-md-6">
-                        <p><strong>Date:</strong> <span id="viewDate"></span></p>
-                        <p><strong>Status:</strong> <span id="viewStatus"></span></p>
-                    </div>
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
         </div>
     </div>
 </div>

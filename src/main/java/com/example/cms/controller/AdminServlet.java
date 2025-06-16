@@ -17,7 +17,6 @@ public class AdminServlet extends HttpServlet {
 
     private final ComplaintsModel complaintsModel = new ComplaintsModel();
 
-    // In AdminServlet.java, add a new path handler for editing
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String path = request.getPathInfo();
