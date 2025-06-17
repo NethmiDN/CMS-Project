@@ -29,7 +29,7 @@ This is a **Web-Based Complaint Management System (CMS)** developed as part of I
 ## Technology Stack
 
 - **Frontend:** JSP, HTML, CSS, JavaScript (for validation only)
-- **Backend:** Jakarta EE Servlets, JavaBeans (POJOs), DAO pattern
+- **Backend:** Jakarta EE Servlets, JavaBeans (POJOs), DTO pattern
 - **Database:** MySQL (accessed via Apache Commons DBCP connection pool)
 - **Server:** Apache Tomcat
 
@@ -37,7 +37,7 @@ This is a **Web-Based Complaint Management System (CMS)** developed as part of I
 
 ## System Architecture
 
-- **Model:** JavaBeans (for data) & DAO classes (for DB operations)
+- **Model:** JavaBeans (for data) & DTO classes (for DB operations)
 - **View:** JSP pages (renders forms, lists, and details)
 - **Controller:** Servlets (handle GET/POST, business logic, session management)
 
@@ -59,7 +59,8 @@ This is a **Web-Based Complaint Management System (CMS)** developed as part of I
     /webapp/
       /WEB-INF/
         /jsp/           # JSP view files
-      /assets/          # CSS, JS (validation only), images
+        /css/           # CSS
+        /js/            # JavaScript (for validation)
 /db/
   schema.sql            # MySQL database schema
 README.md
@@ -80,8 +81,8 @@ README.md
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/<your-username>/<your-repo>.git
-cd <your-repo>
+git clone https://github.com/NethmiDN/CMS-Project.git
+cd <CMS-Project>
 ```
 
 ### 2. Database Setup
@@ -136,13 +137,7 @@ db.driver=com.mysql.cj.jdbc.Driver
 ## Demo Video
 
 **YouTube:**  
-[JakartaEE Project 2025 - IJSE <Batch Number> <Your Full Name> <Your Branch>](<your-youtube-link>)
-
----
-
-## Commit History
-
-- See [GitHub commit log](./) for a chronological record of project progress, feature additions, and bug fixes.
+[JakartaEE Project 2025 - IJSE 72 Nethmi Diwyanga Nanayakkara Galle](<https://youtu.be/0T9h5Z5moMA>)
 
 ---
 
@@ -155,8 +150,8 @@ Violations will result in disciplinary action.
 
 ## Contact
 
-**Author:** <Nethmi Diwyanga Nanayakkara>  
-**Email:** <nethminanayakkara277@gmail.com>
+**Author:** Nethmi Diwyanga Nanayakkara  
+**Email:** nethminanayakkara277@gmail.com
 
 ---
 
