@@ -15,6 +15,7 @@ CREATE TABLE complaints (
                             subject VARCHAR(255),
                             description TEXT,
                             status ENUM('Pending', 'In Progress', 'Resolved') DEFAULT 'Pending',
+                            remarks TEXT,
                             date_submitted TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                             FOREIGN KEY (user_id) REFERENCES users(id)
 );

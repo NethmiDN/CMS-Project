@@ -44,6 +44,8 @@
     Already have an account? <a href="${pageContext.request.contextPath}/index.jsp">Login here</a>.
   </div>
 </div>
+
 <script src="${pageContext.request.contextPath}/js/signup.js"></script>
+
 </body>
 </html>

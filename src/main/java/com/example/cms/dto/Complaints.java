@@ -14,7 +14,16 @@ public class Complaints {
     private String subject;
     private String description;
     private String status;
+    private String remarks;
     private Date date_submitted;
+
+    public String getRemarks() {
+        return remarks;
+    }
+
+    public void setRemarks(String remarks) {
+        this.remarks = remarks;
+    }
 
     // Getters and Setters
     public int getId() {

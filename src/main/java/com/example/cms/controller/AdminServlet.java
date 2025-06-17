@@ -33,7 +33,18 @@ public class AdminServlet extends HttpServlet {
                 request.setAttribute("complaints", complaintsList);
 
                 request.getRequestDispatcher("/jsp/AdminDashboard.jsp").forward(request, response);
-            } else if (path != null && path.equals("/editStatus")) {
+            } else if ("/admin/editComplaint".equals(path)) {
+                String idParam = request.getParameter("id");
+                if (idParam != null) {
+                    int complaintId = Integer.parseInt(idParam);
+                    Complaints complaint = complaintsModel.getComplaintById(complaintId); // Implement this
+                    request.setAttribute("selectedComplaint", complaint);
+                    List<Complaints> complaints = complaintsModel.getAllComplaints(); // Optional: To refill table
+                    request.setAttribute("complaints", complaints);
+                    request.getRequestDispatcher("/WEB-INF/views/adminDashboard.jsp").forward(request, response);
+                }
+            }
+            else if (path != null && path.equals("/editStatus")) {
                 // Load complaint by id to edit status
                 int id = Integer.parseInt(request.getParameter("id"));
                 Complaints complaint = complaintsModel.getComplaintById(id);
@@ -63,8 +74,10 @@ public class AdminServlet extends HttpServlet {
             if ("updateStatus".equals(action)) {
                 int complaintId = Integer.parseInt(request.getParameter("complaintId"));
                 String status = request.getParameter("status");
+                String remarks = request.getParameter("remarks");
 
-                complaintsModel.updateComplaintStatus(complaintId, status);
+                complaintsModel.updateComplaintStatusAndRemarks(complaintId, status, remarks);
+
             } else if ("delete".equals(action)) {
                 int complaintId = Integer.parseInt(request.getParameter("complaintId"));
                 complaintsModel.deleteComplaintById(complaintId);
@@ -73,7 +86,6 @@ public class AdminServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
 
-        // Redirect back to dashboard to reflect changes
         response.sendRedirect(request.getContextPath() + "/admin/dashboard");
     }
 }

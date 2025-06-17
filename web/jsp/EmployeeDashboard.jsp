@@ -6,6 +6,23 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+    String error = (String) request.getSession().getAttribute("error");
+    if (error != null) {
+%>
+<div class="alert alert-danger"><%= error %></div>
+<%
+        request.getSession().removeAttribute("error");
+    }
+
+    String msg = (String) request.getSession().getAttribute("msg");
+    if (msg != null) {
+%>
+<div class="alert alert-success"><%= msg %></div>
+<%
+        request.getSession().removeAttribute("msg");
+    }
+%>
 <html>
 <head>
     <title>Employee Dashboard</title>
@@ -19,14 +36,6 @@
 <!-- Navigation Bar -->
 <nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container">
-        <%
-            String msg = request.getParameter("msg");
-            if ("success".equals(msg)) {
-        %>
-        <div class="alert alert-success">Complaint submitted successfully.</div>
-        <%
-            }
-        %>
         <a class="navbar-brand" href="#">Complaint Management System</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
@@ -80,16 +89,14 @@
                     <td><%= complaint.getDescription() %></td>
                     <td><%= complaint.getDate_submitted() %></td>
                     <td>
-            <span class="badge <%= complaint.getStatus().equals("Pending") ? "bg-warning" :
-                complaint.getStatus().equals("In Progress") ? "bg-info" :
-                complaint.getStatus().equals("Resolved") ? "bg-success" : "bg-danger" %>">
-                <%= complaint.getStatus() %>
-            </span>
+                        <span class="badge <%= complaint.getStatus().equals("Pending") ? "bg-warning" :
+                            complaint.getStatus().equals("In Progress") ? "bg-info" :
+                            complaint.getStatus().equals("Resolved") ? "bg-success" : "bg-danger" %>">
+                            <%= complaint.getStatus() %>
+                        </span>
                     </td>
                     <td>
-
-                        <% if (!complaint.getStatus().equals("Resolved") && !complaint.getStatus().equals("Rejected")) { %>
-                        <!-- Change this to redirect to the edit page instead of using a modal -->
+                        <% if (!"Resolved".equals(complaint.getStatus()) && !"Rejected".equals(complaint.getStatus())) { %>
                         <a href="${pageContext.request.contextPath}/employee/editComplaintForm?complaintId=<%= complaint.getId() %>"
                            class="btn btn-sm btn-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
@@ -102,9 +109,10 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        <% } else { %>
+                        <span class="text-muted">No actions available</span>
                         <% } %>
                     </td>
-
                 </tr>
                 <%
                     }
@@ -126,65 +134,45 @@
                 <h5 class="modal-title">Submit New Complaint</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <c:if test="${not empty error}">
-                <div style="color: red; font-weight: bold; margin-bottom: 10px;">
-                        ${error}
-                </div>
-            </c:if>
-
-            <c:if test="${not empty sessionScope.msg}">
-                <div style="color: green; font-weight: bold; margin-bottom: 10px;">
-                        ${sessionScope.msg}
-                </div>
-                <c:remove var="msg" scope="session"/>
-            </c:if>
             <form action="${pageContext.request.contextPath}/employee/submitComplaint" method="post">
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="subject" class="form-label">Subject</label>
-                        <input type="text" class="form-control" id="subject" name="subject" required>
+                        <label for="subject" class="form-label">Subject *</label>
+                        <input type="text" class="form-control" id="subject" name="subject" required
+                               maxlength="100" placeholder="Enter complaint subject">
                     </div>
                     <div class="mb-3">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea class="form-control" id="description" name="description" rows="5" required></textarea>
+                        <label for="description" class="form-label">Description *</label>
+                        <textarea class="form-control" id="description" name="description" rows="5" required
+                                  maxlength="500" placeholder="Describe your complaint in detail"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Submit Complaint</button>
                 </div>
-                <c:if test="${not empty error}">
-                    <div style="color:red;">${error}</div>
-                </c:if>
             </form>
-
-        </div>
-    </div>
-</div>
-
-<!-- Delete Confirmation Modal -->
-<div class="modal fade" id="deleteConfirmModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Confirm Delete</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this complaint? This action cannot be undone.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form id="deleteForm" action="${pageContext.request.contextPath}/employee/deleteComplaint" method="post">
-                    <input type="hidden" id="deleteComplaintId" name="complaintId">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
-            </div>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Initialize Bootstrap tooltips
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
 
+        // Auto-focus on subject field when modal opens
+        var complaintModal = document.getElementById('newComplaintModal');
+        if (complaintModal) {
+            complaintModal.addEventListener('shown.bs.modal', function () {
+                document.getElementById('subject').focus();
+            });
+        }
+    });
+</script>
 </body>
 </html>

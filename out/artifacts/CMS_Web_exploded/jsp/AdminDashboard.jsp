@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: Nethmi
+  Date: 6/13/2025
+  Time: 8:44 AM
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>--%>
 
@@ -153,6 +160,14 @@
                             <option value="Resolved" <%= "Resolved".equals(complaint.getStatus()) ? "selected" : "" %>>Resolved</option>
                         </select>
                     </div>
+
+                    <!-- Add remarks section -->
+                    <div class="mb-3">
+                        <label for="remarksTextarea" class="form-label">Admin Remarks</label>
+                        <textarea class="form-control" id="remarksTextarea" name="remarks" rows="4"
+                                  placeholder="Add your comments or notes about this complaint"><%= complaint.getRemarks() != null ? complaint.getRemarks() : "" %></textarea>
+                        <div class="form-text text-muted">These remarks will be visible to the admin team only</div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn btn-secondary">Cancel</a>
@@ -203,6 +218,17 @@
                     <strong>Date Submitted:</strong>
                     <p><%= viewComplaint.getDate_submitted() %></p>
                 </div>
+                <!-- Display remarks if they exist -->
+                <% if (viewComplaint.getRemarks() != null && !viewComplaint.getRemarks().isEmpty()) { %>
+                <div class="mb-3">
+                    <strong>Admin Remarks:</strong>
+                    <div class="card bg-light mt-2">
+                        <div class="card-body">
+                            <p class="card-text"><%= viewComplaint.getRemarks() %></p>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
             </div>
             <div class="modal-footer">
                 <a href="${pageContext.request.contextPath}/admin/dashboard" class="btn btn-secondary">Close</a>
