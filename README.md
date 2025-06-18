@@ -137,7 +137,7 @@ db.driver=com.mysql.cj.jdbc.Driver
 ## Demo Video
 
 **YouTube:**  
-[JakartaEE Project 2025 - IJSE 72 Nethmi Diwyanga Nanayakkara Galle](<https://youtu.be/0T9h5Z5moMA>)
+[JakartaEE Project 2025 - IJSE 72 Nethmi Diwyanga Nanayakkara Galle](<https://youtu.be/yMlJYc3zYpM>)
 
 ---
 
